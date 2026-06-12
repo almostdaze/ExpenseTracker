@@ -1,8 +1,8 @@
 #import modules
-from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QMessageBox, QWidget, QLineEdit, QLabel, QPushButton, QComboBox, QDateEdit, QTableWidget, QHBoxLayout, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QHeaderView, QTableWidgetItem, QMessageBox, QWidget, QLineEdit, QLabel, QPushButton, QComboBox, QDateEdit, QTableWidget, QHBoxLayout, QVBoxLayout
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery
 import sys
-from PyQt5.QtCore import QDate
+from PyQt5.QtCore import QDate, Qt
 
 #App Class
 class ExpenseApp(QWidget):
@@ -13,14 +13,15 @@ class ExpenseApp(QWidget):
         self.setWindowTitle("Expense Tracker")
 
         self.date_box = QDateEdit()
+        self.date_box.setDate(QDate.currentDate())
         self.dropdown = QComboBox()
         self.amount = QLineEdit()
         self.description = QLineEdit()
 
         self.add_button = QPushButton("Add Expense")
-        self.add_button.setStyleSheet('QPushButton {background-color: #6f7a5a;}')
+        #self.add_button.setStyleSheet('QPushButton {background-color: #6f7a5a;}')
         self.delete_button = QPushButton("Delete Expense")
-        self.delete_button.setStyleSheet('QPushButton {background-color: #aa463f;}')
+        #self.delete_button.setStyleSheet('QPushButton {background-color: #aa463f;}')
         self.add_button.clicked.connect(self.add_expense)
         self.delete_button.clicked.connect(self.delete_expense)
         
@@ -29,11 +30,57 @@ class ExpenseApp(QWidget):
         self.table.setColumnCount(5) #ID,Date, Category, Amount, Description
         header_names = ["ID", "Date", "Category", "Amount", "Description"]
         self.table.setHorizontalHeaderLabels(header_names)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.table.sortByColumn(1, Qt.DescendingOrder)
 
         #Design App With Layouts
 
         self.dropdown.addItems(["Food", "Transportation", "Bills", "Shopping", "Rent", "Other"])
         
+        self.setStyleSheet("""
+                            QWidget {background-color: #f4e3b2;}
+                           
+                            QLabel{
+                                color: #333;
+                                font-size: 14px;
+                           }
+                           
+                            QLineEdit, QComboBox, QDateEdit{
+                                background-color: #947268;
+                                color: #333;
+                                border: 1px solid #444;
+                                padding: 5px;
+                           }
+
+                            QTableWidget{
+                                background-color: #716331;
+                                color: #fff;
+                                border: 1px solid #333;
+                                selection-background-color: #b8b3b1;
+                           }
+                           
+                            QPushButton{
+                                background-color: #5d4459;
+                                color: #fff;
+                                border: none;
+                                padding: 8px 16px;
+                                font-size: 14px
+                           }
+
+                           QMessageBox{
+                                background-color: #a56321;
+                                border: none;
+                                padding: 8px 16px;
+                                font-size: 14px
+                           }
+
+                            QPushButton:hover{background-color: #362f32;}
+                           
+
+         """)
+
+
+
         self.master_layout = QVBoxLayout()
         self.row1 = QHBoxLayout()
         self.row2 = QHBoxLayout()
@@ -152,6 +199,6 @@ query.exec_("""
 if __name__ in "__main__":
     app = QApplication([])
     main = ExpenseApp()
-    main.setStyleSheet("QWidget {background-color: #9eab46}")
+    #main.setStyleSheet("QWidget {background-color: #9eab46}")
     main.show()
     app.exec_()
